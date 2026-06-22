@@ -29,6 +29,10 @@
   const sunIcon      = themeToggle ? themeToggle.querySelector(".sun-icon") : null;
   const moonIcon     = themeToggle ? themeToggle.querySelector(".moon-icon") : null;
 
+  // Search refs
+  const searchInput  = document.getElementById("search-input");
+  const searchClear  = document.getElementById("search-clear");
+
   // ── Helpers ──
 
   /** Format an ISO-ish date string to a friendly locale string. */
@@ -77,6 +81,8 @@
     emptyState.classList.add("hidden");
     showSkeletons(6);
     currentEntries = [];
+    if (searchInput) searchInput.value = "";
+    if (searchClear) searchClear.classList.add("hidden");
 
     try {
       const res = await fetch("/api/notes");
@@ -136,7 +142,13 @@
       card.innerHTML = `
         <span class="card-date">${dateStr}</span>
         <h2 class="card-title"><a href="${entry.link}" target="_blank" rel="noopener noreferrer">${entry.title}</a></h2>
-        <div class="card-summary">${plainSummary}</div>
+        <div class="card-summary truncated">${plainSummary}</div>
+        <button class="btn-expand hidden">
+          <span>Read More</span>
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="transition: transform var(--transition-fast);">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
         <div class="card-actions">
           <button class="btn-card btn-tweet-card" data-title="${encodeURIComponent(entry.title)}" data-link="${encodeURIComponent(entry.link)}">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
@@ -167,6 +179,30 @@
     // Attach copy-card button listeners
     document.querySelectorAll(".btn-copy-card").forEach((btn) => {
       btn.addEventListener("click", () => copyCardToClipboard(btn));
+    });
+
+    // Handle read more toggles
+    document.querySelectorAll(".note-card").forEach((card) => {
+      const summary = card.querySelector(".card-summary");
+      const expandBtn = card.querySelector(".btn-expand");
+      if (!summary || !expandBtn) return;
+
+      if (summary.scrollHeight > summary.clientHeight) {
+        expandBtn.classList.remove("hidden");
+        expandBtn.addEventListener("click", () => {
+          const isTruncated = summary.classList.toggle("truncated");
+          const label = expandBtn.querySelector("span");
+          const svg = expandBtn.querySelector("svg");
+          
+          if (isTruncated) {
+            if (label) label.textContent = "Read More";
+            if (svg) svg.style.transform = "rotate(0deg)";
+          } else {
+            if (label) label.textContent = "Read Less";
+            if (svg) svg.style.transform = "rotate(180deg)";
+          }
+        });
+      }
     });
   }
 
@@ -280,6 +316,27 @@
     applyTheme(newTheme);
   }
 
+  // ── Search & Filter ──
+
+  function handleSearch() {
+    const query = searchInput.value.toLowerCase().trim();
+    if (query === "") {
+      if (searchClear) searchClear.classList.add("hidden");
+    } else {
+      if (searchClear) searchClear.classList.remove("hidden");
+    }
+
+    const filtered = currentEntries.filter(entry => {
+      const titleMatch = (entry.title || "").toLowerCase().includes(query);
+      const summaryMatch = stripHtml(entry.summary || "").toLowerCase().includes(query);
+      return titleMatch || summaryMatch;
+    });
+
+    renderCards(filtered);
+    
+    noteCount.textContent = `${filtered.length} matching note${filtered.length !== 1 ? "s" : ""}`;
+  }
+
   // ── Events ──
 
   refreshBtn.addEventListener("click", loadNotes);
@@ -288,6 +345,15 @@
   }
   if (themeToggle) {
     themeToggle.addEventListener("click", toggleTheme);
+  }
+  if (searchInput) {
+    searchInput.addEventListener("input", handleSearch);
+  }
+  if (searchClear) {
+    searchClear.addEventListener("click", () => {
+      searchInput.value = "";
+      handleSearch();
+    });
   }
 
   tweetText.addEventListener("input", updateCharCount);

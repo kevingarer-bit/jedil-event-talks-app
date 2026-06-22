@@ -390,10 +390,36 @@ body {
   font-size: 0.84rem;
   line-height: 1.65;
   color: var(--text-secondary);
+}
+
+.card-summary.truncated {
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
+}
+
+/* ─── Expand Button ─── */
+.btn-expand {
+  background: none;
+  border: none;
+  color: var(--accent-blue);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+  padding: 2px 0;
+  margin-top: -4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color var(--transition-fast);
+}
+
+.btn-expand:hover {
+  color: var(--accent-cyan);
+  text-decoration: underline;
 }
 
 .card-summary a {
@@ -710,4 +736,72 @@ body {
 @keyframes shimmer {
   0%   { background-position: 200% 0; }
   100% { background-position: -200% 0; }
+}
+
+/* ─── Search Input ─── */
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrapper input {
+  padding: 8px 16px 8px 36px;
+  background: rgba(148, 163, 184, 0.05);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 0.8rem;
+  width: 240px;
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.search-wrapper input:focus {
+  border-color: var(--accent-blue);
+  background: rgba(148, 163, 184, 0.10);
+  box-shadow: 0 0 0 3px rgba(78, 154, 245, 0.15);
+}
+
+.search-wrapper .search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.btn-search-clear {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.btn-search-clear:hover {
+  color: var(--text-primary);
+}
+
+/* Responsive adjustment for search */
+@media (max-width: 640px) {
+  .status-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .status-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .search-wrapper input {
+    width: 100%;
+  }
 }
