@@ -24,6 +24,11 @@
   const tweetCancel  = document.getElementById("tweet-cancel");
   const tweetSubmit  = document.getElementById("tweet-submit");
 
+  // Theme refs
+  const themeToggle  = document.getElementById("theme-toggle");
+  const sunIcon      = themeToggle ? themeToggle.querySelector(".sun-icon") : null;
+  const moonIcon     = themeToggle ? themeToggle.querySelector(".moon-icon") : null;
+
   // ── Helpers ──
 
   /** Format an ISO-ish date string to a friendly locale string. */
@@ -249,11 +254,40 @@
     document.body.removeChild(link);
   }
 
+  // ── Theme Management ──
+
+  function initTheme() {
+    const savedTheme = localStorage.getItem("theme") || "dark";
+    applyTheme(savedTheme);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    localStorage.setItem("theme", theme);
+
+    if (theme === "light") {
+      if (sunIcon) sunIcon.classList.add("hidden");
+      if (moonIcon) moonIcon.classList.remove("hidden");
+    } else {
+      if (sunIcon) sunIcon.classList.remove("hidden");
+      if (moonIcon) moonIcon.classList.add("hidden");
+    }
+  }
+
+  function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute("data-theme") || "dark";
+    const newTheme = currentTheme === "dark" ? "light" : "dark";
+    applyTheme(newTheme);
+  }
+
   // ── Events ──
 
   refreshBtn.addEventListener("click", loadNotes);
   if (exportCsvBtn) {
     exportCsvBtn.addEventListener("click", exportToCSV);
+  }
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleTheme);
   }
 
   tweetText.addEventListener("input", updateCharCount);
@@ -274,5 +308,6 @@
   });
 
   // ── Init ──
+  initTheme();
   loadNotes();
 })();
