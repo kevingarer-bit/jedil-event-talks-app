@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Browse and share the latest Google BigQuery release notes in a beautiful dashboard." />
+  <title>BigQuery Release Notes</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ─── Ambient background blobs ─── -->
+  <div class="ambient-bg">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- ─── Header ─── -->
+  <header id="app-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="7.5 4.21 12 6.81 16.5 4.21"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </div>
+        <div>
+          <h1>BigQuery Release Notes</h1>
+          <p class="subtitle" id="feed-updated">Loading feed&hellip;</p>
+        </div>
+      </div>
+
+      <button id="refresh-btn" class="btn-refresh" title="Refresh feed">
+        <svg class="refresh-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        <span class="btn-label">Refresh</span>
+        <!-- Spinner (hidden by default) -->
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </div>
+  </header>
+
+  <!-- ─── Main ─── -->
+  <main id="app-main">
+    <!-- Status bar -->
+    <div class="status-bar" id="status-bar">
+      <span id="note-count">0 notes</span>
+    </div>
+
+    <!-- Notes grid -->
+    <div class="notes-grid" id="notes-grid">
+      <!-- Cards injected by JS -->
+    </div>
+
+    <!-- Empty / error states -->
+    <div class="empty-state hidden" id="empty-state">
+      <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p id="empty-msg">No release notes found.</p>
+    </div>
+  </main>
+
+  <!-- ─── Tweet Modal ─── -->
+  <div class="modal-overlay hidden" id="tweet-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Share on 𝕏</h2>
+        <button class="modal-close" id="modal-close" title="Close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <textarea id="tweet-text" rows="5" maxlength="280"></textarea>
+        <p class="char-count"><span id="char-count">0</span>/280</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" id="tweet-cancel">Cancel</button>
+        <button class="btn-tweet" id="tweet-submit">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Post on 𝕏
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
